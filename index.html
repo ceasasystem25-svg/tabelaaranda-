@@ -321,7 +321,7 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwmzjYDJHOqdfzo1sxpsd3rppfptEHcsH997Tc2Ck-P6CQ2-KxOW3VFDDzfFOsI5KsL/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxlsKhfu5TMJKicW1EbfqLAYx4Uh8-8sl9cK3KqLxdFGeCtmuGB3hGCFzFh4i6V0QKxqw/exec';
 
         const dataHoje = new Date().toLocaleDateString('pt-BR');
         document.getElementById('data-atual').innerText = `Atualizado em: ${dataHoje}`;
@@ -357,9 +357,9 @@
         }
 
         function identificarCategoria(linha) {
-            // Se a planilha possuir uma coluna de Categoria explicita (linha[8])
-            if (linha[8] && linha[8].toString().trim() !== '') {
-                const catColuna = linha[8].toString().toUpperCase().trim();
+            // AQUI OCORREU A MUDANÇA: Agora o script lê a Coluna C (linha[2]) 
+            if (linha[2] && linha[2].toString().trim() !== '') {
+                const catColuna = linha[2].toString().toUpperCase().trim();
                 if (catColuna.includes('FRUTA')) return 'FRUTAS';
                 if (catColuna.includes('LEGUME') || catColuna.includes('VERDURA')) return 'LEGUMES';
             }
