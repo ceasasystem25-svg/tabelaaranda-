@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabela de Preços Aranda - Frutas e Legumes</title>
+    <title>Tabela de Preços Colmeia - Frutas e Legumes</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Reset e Fonte Moderna */
@@ -357,7 +357,7 @@
         }
 
         function identificarCategoria(linha) {
-            // AQUI OCORREU A MUDANÇA: Agora o script lê a Coluna C (linha[2]) 
+            // AQUI: Lê a Coluna C (linha[2]) 
             if (linha[2] && linha[2].toString().trim() !== '') {
                 const catColuna = linha[2].toString().toUpperCase().trim();
                 if (catColuna.includes('FRUTA')) return 'FRUTAS';
@@ -412,7 +412,8 @@
             dadosBrutos.forEach(linha => {
                 if (!linha[1] || linha[1].trim() === "") return; 
 
-                const situacao = linha[7] ? linha[7].toString().toUpperCase().trim() : "";
+                // Situação (Disponível/Indisponível). Lendo a Coluna I (índice 8)
+                const situacao = linha[8] ? linha[8].toString().toUpperCase().trim() : "";
                 if (situacao === "NÃO" || situacao === "NAO" || situacao.includes("INDISPON")) return; 
 
                 const cat = identificarCategoria(linha);
@@ -458,21 +459,31 @@
         }
 
         function adicionarLinhaProduto(tbody, linha) {
-            const oferta = linha[6] ? linha[6].toString().toUpperCase().trim() : "";
+            // Oferta: lê a Coluna H (índice 7) procurando "SIM"
+            const oferta = linha[7] ? linha[7].toString().toUpperCase().trim() : "";
             const isOferta = (oferta === "SIM" || oferta === "S");
 
             const tr = document.createElement('tr');
+            
+            // Destaca a linha inteira de amarelo se for oferta
             if (isOferta) tr.classList.add('linha-oferta');
 
-            for(let i = 0; i < 6; i++) {
+            // Aqui escolhemos EXATAMENTE quais colunas vão aparecer no PDF, pulando a Coluna C (Categoria)
+            // 0=A(Código), 1=B(Produto), 3=D(Peso), 4=E(CX/UND), 5=F(Preço Emb), 6=G(Preço Kg)
+            const colunasParaExibir = [0, 1, 3, 4, 5, 6];
+
+            colunasParaExibir.forEach(indice => {
                 const td = document.createElement('td');
-                if (i === 1 && isOferta) {
-                    td.innerHTML = `${linha[i]} <span class="badge-oferta">🔥 Oferta</span>`;
+                
+                // Se for a coluna do Produto (índice 1) e estiver em oferta, coloca a tag 🔥
+                if (indice === 1 && isOferta) {
+                    td.innerHTML = `${linha[indice]} <span class="badge-oferta">🔥 Oferta</span>`;
                 } else {
-                    td.textContent = linha[i] || '-'; 
+                    td.textContent = linha[indice] || '-'; 
                 }
                 tr.appendChild(td);
-            }
+            });
+            
             tbody.appendChild(tr);
         }
 
